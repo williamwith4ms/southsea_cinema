@@ -67,14 +67,18 @@ class _MovieListingState extends State<MovieListing> {
                 Text("Adult (£7.50)")
               ],
             ),
-            ElevatedButton(
-                onPressed: () {
-                  setState(() {
-                    _orderedTickets += _dropdownTickets;
-                  });
-                },
-                child: Text("Add to Order")),
-            OrderStatus(_orderedTickets)
+            Row(
+              children: [
+                ElevatedButton(
+                    onPressed: () {
+                      setState(() {
+                        _orderedTickets += _dropdownTickets;
+                      });
+                    },
+                    child: Text("Add to Order")),
+                OrderStatus(_orderedTickets),
+              ],
+            )
           ],
         ),
       ),
@@ -89,6 +93,9 @@ class OrderStatus extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    if (tickets == 0) {
+      return Text("");
+    }
     return Text("$tickets tickets added");
   }
 }
