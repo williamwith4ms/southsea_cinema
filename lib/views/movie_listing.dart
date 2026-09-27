@@ -21,7 +21,8 @@ class MovieListing extends StatefulWidget {
 }
 
 class _MovieListingState extends State<MovieListing> {
-  int _tickets = 0;
+  int _dropdownTickets = 0;
+  int _orderedTickets = 0;
 
   @override
   Widget build(BuildContext context) {
@@ -50,7 +51,7 @@ class _MovieListingState extends State<MovieListing> {
                   onSelected: (int? value) {
                     if (value != null) {
                       setState(() {
-                        _tickets = value;
+                        _dropdownTickets = value;
                       });
                     }
                   },
@@ -65,10 +66,29 @@ class _MovieListingState extends State<MovieListing> {
                 ),
                 Text("Adult (£7.50)")
               ],
-            )
+            ),
+            ElevatedButton(
+                onPressed: () {
+                  setState(() {
+                    _orderedTickets += _dropdownTickets;
+                  });
+                },
+                child: Text("Add to Order")),
+            OrderStatus(_orderedTickets)
           ],
         ),
       ),
     );
+  }
+}
+
+class OrderStatus extends StatelessWidget {
+  final int tickets;
+
+  const OrderStatus(this.tickets, {super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return Text("$tickets tickets added");
   }
 }
