@@ -15,7 +15,14 @@ class MovieListing extends StatelessWidget {
         elevation: 0,
       ),
       drawer: const NavDrawer(),
-      body: const SizedBox.shrink(),
+      body: Container(
+        child: Column(
+          children: [
+            Text("Crimson Tide (1995)",),
+            Text("(R) 1h 56m\nOn a U.S. nuclear missile sub, a young First Officer stages a mutiny to prevent his trigger-happy Captain from launching his missiles before confirming his orders to do so.")
+          ],
+        ),
+      ),
     );
   }
 }
