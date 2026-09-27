@@ -12,6 +12,8 @@ import 'package:southsea_cinema/widgets/nav_drawer.dart';
 class MovieListing extends StatefulWidget {
   final int maxTickets = 5;
 
+  const MovieListing({super.key});
+
   @override
   State<StatefulWidget> createState() {
     return _MovieListingState();
@@ -40,7 +42,30 @@ class _MovieListingState extends State<MovieListing> {
               Text("(R) 1h 56m")
             ]),
             Text(
-                "On a U.S. nuclear missile sub, a young First Officer stages a mutiny to prevent his trigger-happy Captain from launching his missiles before confirming his orders to do so.")
+                "On a U.S. nuclear missile sub, a young First Officer stages a mutiny to prevent his trigger-happy Captain from launching his missiles before confirming his orders to do so."),
+            Row(
+              children: [
+                DropdownMenu(
+                  initialSelection: 0,
+                  onSelected: (int? value) {
+                    if (value != null) {
+                      setState(() {
+                        _tickets = value;
+                      });
+                    }
+                  },
+                  dropdownMenuEntries: [
+                    DropdownMenuEntry(value: 0, label: "0"),
+                    DropdownMenuEntry(value: 1, label: "1"),
+                    DropdownMenuEntry(value: 2, label: "2"),
+                    DropdownMenuEntry(value: 3, label: "3"),
+                    DropdownMenuEntry(value: 4, label: "4"),
+                    DropdownMenuEntry(value: 5, label: "5")
+                  ],
+                ),
+                Text("Adult (£7.50)")
+              ],
+            )
           ],
         ),
       ),
