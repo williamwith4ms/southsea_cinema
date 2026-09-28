@@ -35,15 +35,36 @@ class _MovieListingState extends State<MovieListing> {
       ),
       drawer: const NavDrawer(),
       body: Container(
+        padding: EdgeInsets.all(16),
         child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Row(children: [
-              Text("Crimson Tide (1995)"),
+              Text(
+                "Crimson Tide (1995)",
+                style: cinemaHeaderStyle,
+              ),
               SizedBox(width: 16),
-              Text("(R) 1h 56m")
+              Text("(R) 1h 56m", style: cinemaHeaderStyle),
             ]),
             Text(
-                "On a U.S. nuclear missile sub, a young First Officer stages a mutiny to prevent his trigger-happy Captain from launching his missiles before confirming his orders to do so."),
+              "Screen 3 - Thursday 22 Oct 2026, 18:00 - ends at 19:56 ",
+              style: movieListingSubStyle,
+            ),
+            SizedBox(height: 16),
+            Text(
+              "On a U.S. nuclear missile sub, a young First Officer stages a mutiny to prevent his trigger-happy Captain from launching his missiles before confirming his orders to do so.",
+              style: movieListingBodyStyle,
+            ),
+            SizedBox(height: 16),
+            Text(
+              "Please note that Discounts / Membership benefits will be applied once you have selected your tickets",
+              style: movieListingBodyStyle,
+            ),
+            SizedBox(height: 16),
+            Text("Tickets", style: cinemaHeaderStyle),
+            Text("(Select up to 5 total)", style: movieListingSubStyle),
+            SizedBox(height: 16),
             Row(
               children: [
                 DropdownMenu(
@@ -64,18 +85,28 @@ class _MovieListingState extends State<MovieListing> {
                     DropdownMenuEntry(value: 5, label: "5")
                   ],
                 ),
-                Text("Adult (£7.50)")
+                SizedBox(
+                  width: 10,
+                ),
+                Text("Adult (£7.50)", style: movieListingBodyStyle)
               ],
             ),
+            SizedBox(height: 16),
             Row(
               children: [
                 ElevatedButton(
+                    style: ElevatedButton.styleFrom(
+                        backgroundColor: cinemaBrand,
+                        foregroundColor: cinemaFontWhite),
                     onPressed: () {
                       setState(() {
-                        _orderedTickets += _dropdownTickets;
+                        _orderedTickets = _dropdownTickets;
                       });
                     },
                     child: Text("Add to Order")),
+                SizedBox(
+                  width: 10,
+                ),
                 OrderStatus(_orderedTickets),
               ],
             )
@@ -96,6 +127,9 @@ class OrderStatus extends StatelessWidget {
     if (tickets == 0) {
       return Text("");
     }
-    return Text("$tickets tickets added");
+    return Text(
+      "$tickets ticket(s) added to cart",
+      style: movieListingSubStyle,
+    );
   }
 }
