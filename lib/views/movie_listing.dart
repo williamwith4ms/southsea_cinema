@@ -63,27 +63,32 @@ class _MovieListingState extends State<MovieListing> {
             ),
             SizedBox(height: 16),
             Text("Tickets", style: cinemaHeaderStyle),
-            Text("(Select up to 5 total)", style: movieListingSubStyle),
+            Text("(Select quantity up to 5 total)",
+                style: movieListingSubStyle),
             SizedBox(height: 16),
             Row(
               children: [
-                DropdownMenu(
-                  initialSelection: 0,
-                  onSelected: (int? value) {
-                    if (value != null) {
-                      setState(() {
-                        _dropdownTickets = value;
-                      });
-                    }
-                  },
-                  dropdownMenuEntries: [
-                    DropdownMenuEntry(value: 0, label: "0"),
-                    DropdownMenuEntry(value: 1, label: "1"),
-                    DropdownMenuEntry(value: 2, label: "2"),
-                    DropdownMenuEntry(value: 3, label: "3"),
-                    DropdownMenuEntry(value: 4, label: "4"),
-                    DropdownMenuEntry(value: 5, label: "5")
-                  ],
+                Container(
+                  decoration: BoxDecoration(color: cinemaFontWhite),
+                  child: DropdownMenu(
+                    textStyle: TextStyle(color: cinemaBackground),
+                    initialSelection: 0,
+                    onSelected: (int? value) {
+                      if (value != null) {
+                        setState(() {
+                          _dropdownTickets = value;
+                        });
+                      }
+                    },
+                    dropdownMenuEntries: [
+                      DropdownMenuEntry(value: 0, label: "0"),
+                      DropdownMenuEntry(value: 1, label: "1"),
+                      DropdownMenuEntry(value: 2, label: "2"),
+                      DropdownMenuEntry(value: 3, label: "3"),
+                      DropdownMenuEntry(value: 4, label: "4"),
+                      DropdownMenuEntry(value: 5, label: "5")
+                    ],
+                  ),
                 ),
                 SizedBox(
                   width: 10,
@@ -94,16 +99,19 @@ class _MovieListingState extends State<MovieListing> {
             SizedBox(height: 16),
             Row(
               children: [
-                ElevatedButton(
-                    style: ElevatedButton.styleFrom(
-                        backgroundColor: cinemaBrand,
-                        foregroundColor: cinemaFontWhite),
-                    onPressed: () {
-                      setState(() {
-                        _orderedTickets = _dropdownTickets;
-                      });
-                    },
-                    child: Text("Add to Order")),
+                Container(
+                  decoration: BoxDecoration(color: cinemaBrand),
+                  child: TextButton(
+                      onPressed: () {
+                        setState(() {
+                          _orderedTickets = _dropdownTickets;
+                        });
+                      },
+                      child: Text(
+                        "Add to Order",
+                        style: movieListingBodyStyle,
+                      )),
+                ),
                 SizedBox(
                   width: 10,
                 ),
@@ -128,7 +136,7 @@ class OrderStatus extends StatelessWidget {
       return Text("");
     }
     return Text(
-      "$tickets ticket(s) added to cart",
+      "$tickets ticket package in order",
       style: movieListingSubStyle,
     );
   }
