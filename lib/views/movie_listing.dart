@@ -47,10 +47,25 @@ class _MovieListingState extends State<MovieListing> {
               SizedBox(width: 16),
               Text("(R) 1h 56m", style: cinemaHeaderStyle),
             ]),
-            Text(
-              "Screen 3 - Thursday 22 Oct 2026, 18:00 - ends at 19:56 ",
-              style: movieListingSubStyle,
-            ),
+            LayoutBuilder(builder: (context, constraints) {
+              if (constraints.maxWidth > 600) {
+                return Row(children: [
+                  Text("Screen 3 - ", style: movieListingSubStyle),
+                  Text("Thursday 22 Oct 2026, 18:00",
+                      style: movieListingSubStyle),
+                  Text(" - Ends at 19:56", style: movieListingSubStyle)
+                ]);
+              } else {
+                return Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text("- Screen 3", style: movieListingSubStyle),
+                      Text("- Thursday 22 Oct 2026, 18:00",
+                          style: movieListingSubStyle),
+                      Text("- Ends at 19:56", style: movieListingSubStyle)
+                    ]);
+              }
+            }),
             SizedBox(height: 16),
             Text(
               "On a U.S. nuclear missile sub, a young First Officer stages a mutiny to prevent his trigger-happy Captain from launching his missiles before confirming his orders to do so.",
