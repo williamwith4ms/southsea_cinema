@@ -39,14 +39,27 @@ class _MovieListingState extends State<MovieListing> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Row(children: [
-              Text(
-                "Crimson Tide (1995)",
-                style: cinemaHeaderStyle,
-              ),
-              SizedBox(width: 16),
-              Text("(R) 1h 56m", style: cinemaHeaderStyle),
-            ]),
+            LayoutBuilder(builder: (context, constraints) {
+              if (constraints.maxWidth > 600) {
+                return Row(children: [
+                  Text(
+                    "Crimson Tide (1995)",
+                    style: cinemaHeaderStyle,
+                  ),
+                  SizedBox(width: 16),
+                  Text("(R) 1h 56m", style: cinemaHeaderStyle),
+                ]);
+              } else {
+                return Column(children: [
+                  Text(
+                    "Crimson Tide (1995)",
+                    style: cinemaHeaderStyle,
+                  ),
+                  SizedBox(width: 16),
+                  Text("(R) 1h 56m", style: cinemaHeaderStyle),
+                ]);
+              }
+            }),
             LayoutBuilder(builder: (context, constraints) {
               if (constraints.maxWidth > 600) {
                 return Row(children: [
@@ -81,36 +94,71 @@ class _MovieListingState extends State<MovieListing> {
             Text("(Select quantity up to 5 total)",
                 style: movieListingSubStyle),
             SizedBox(height: 16),
-            Row(
-              children: [
-                Container(
-                  decoration: BoxDecoration(color: cinemaFontWhite),
-                  child: DropdownMenu(
-                    textStyle: TextStyle(color: cinemaBackground),
-                    initialSelection: 0,
-                    onSelected: (int? value) {
-                      if (value != null) {
-                        setState(() {
-                          _dropdownTickets = value;
-                        });
-                      }
-                    },
-                    dropdownMenuEntries: [
-                      DropdownMenuEntry(value: 0, label: "0"),
-                      DropdownMenuEntry(value: 1, label: "1"),
-                      DropdownMenuEntry(value: 2, label: "2"),
-                      DropdownMenuEntry(value: 3, label: "3"),
-                      DropdownMenuEntry(value: 4, label: "4"),
-                      DropdownMenuEntry(value: 5, label: "5")
-                    ],
-                  ),
-                ),
-                SizedBox(
-                  width: 10,
-                ),
-                Text("Adult (£7.50)", style: movieListingBodyStyle)
-              ],
-            ),
+            LayoutBuilder(builder: (context, constraints) {
+              if (constraints.maxWidth > 600) {
+                return Row(
+                  children: [
+                    Container(
+                      decoration: BoxDecoration(color: cinemaFontWhite),
+                      child: DropdownMenu(
+                        textStyle: TextStyle(color: cinemaBackground),
+                        initialSelection: 0,
+                        onSelected: (int? value) {
+                          if (value != null) {
+                            setState(() {
+                              _dropdownTickets = value;
+                            });
+                          }
+                        },
+                        dropdownMenuEntries: [
+                          DropdownMenuEntry(value: 0, label: "0"),
+                          DropdownMenuEntry(value: 1, label: "1"),
+                          DropdownMenuEntry(value: 2, label: "2"),
+                          DropdownMenuEntry(value: 3, label: "3"),
+                          DropdownMenuEntry(value: 4, label: "4"),
+                          DropdownMenuEntry(value: 5, label: "5")
+                        ],
+                      ),
+                    ),
+                    SizedBox(
+                      width: 10,
+                    ),
+                    Text("Adult (£7.50)", style: movieListingBodyStyle)
+                  ],
+                );
+              } else {
+                return Column(
+                  children: [
+                    Container(
+                      decoration: BoxDecoration(color: cinemaFontWhite),
+                      child: DropdownMenu(
+                        textStyle: TextStyle(color: cinemaBackground),
+                        initialSelection: 0,
+                        onSelected: (int? value) {
+                          if (value != null) {
+                            setState(() {
+                              _dropdownTickets = value;
+                            });
+                          }
+                        },
+                        dropdownMenuEntries: [
+                          DropdownMenuEntry(value: 0, label: "0"),
+                          DropdownMenuEntry(value: 1, label: "1"),
+                          DropdownMenuEntry(value: 2, label: "2"),
+                          DropdownMenuEntry(value: 3, label: "3"),
+                          DropdownMenuEntry(value: 4, label: "4"),
+                          DropdownMenuEntry(value: 5, label: "5")
+                        ],
+                      ),
+                    ),
+                    SizedBox(
+                      width: 10,
+                    ),
+                    Text("Adult (£7.50)", style: movieListingBodyStyle)
+                  ],
+                );
+              }
+            }),
             SizedBox(height: 16),
             Row(
               children: [
