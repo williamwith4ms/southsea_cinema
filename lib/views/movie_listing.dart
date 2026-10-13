@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:southsea_cinema/constants.dart';
+import 'package:southsea_cinema/models/movie_data.dart';
 import 'package:southsea_cinema/widgets/nav_drawer.dart';
 
 // class MovieListing extends StatelessWidget {
@@ -11,8 +12,9 @@ import 'package:southsea_cinema/widgets/nav_drawer.dart';
 
 class MovieListing extends StatefulWidget {
   final int maxTickets = 5;
+  final MovieData movieData;
 
-  const MovieListing({super.key});
+  const MovieListing({super.key, required this.movieData});
 
   @override
   State<StatefulWidget> createState() {
@@ -43,45 +45,40 @@ class _MovieListingState extends State<MovieListing> {
               if (constraints.maxWidth > 600) {
                 return Row(children: [
                   Text(
-                    "Crimson Tide (1995)",
+                    "${widget.movieData.title} ${widget.movieData.year}",
                     style: cinemaHeaderStyle,
                   ),
                   SizedBox(width: 16),
-                  Text("(R) 1h 56m", style: cinemaHeaderStyle),
+                  Text("${widget.movieData.rating}", style: cinemaHeaderStyle),
                 ]);
               } else {
                 return Column(children: [
                   Text(
-                    "Crimson Tide (1995)",
+                    "${widget.movieData.title} ${widget.movieData.year}",
                     style: cinemaHeaderStyle,
                   ),
                   SizedBox(width: 16),
-                  Text("(R) 1h 56m", style: cinemaHeaderStyle),
+                  Text("${widget.movieData.rating}", style: cinemaHeaderStyle),
                 ]);
               }
             }),
             LayoutBuilder(builder: (context, constraints) {
               if (constraints.maxWidth > 600) {
                 return Row(children: [
-                  Text("Screen 3 - ", style: movieListingSubStyle),
-                  Text("Thursday 22 Oct 2026, 18:00",
-                      style: movieListingSubStyle),
-                  Text(" - Ends at 19:56", style: movieListingSubStyle)
+                  Text("${widget.movieData.date}", style: movieListingSubStyle),
                 ]);
               } else {
                 return Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      Text("- Screen 3", style: movieListingSubStyle),
-                      Text("- Thursday 22 Oct 2026, 18:00",
+                      Text("- ${widget.movieData.date}",
                           style: movieListingSubStyle),
-                      Text("- Ends at 19:56", style: movieListingSubStyle)
                     ]);
               }
             }),
             SizedBox(height: 16),
             Text(
-              "On a U.S. nuclear missile sub, a young First Officer stages a mutiny to prevent his trigger-happy Captain from launching his missiles before confirming his orders to do so.",
+              "${widget.movieData.description}",
               style: movieListingBodyStyle,
             ),
             SizedBox(height: 16),
