@@ -41,27 +41,16 @@ class _MovieListingState extends State<MovieListing> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            LayoutBuilder(builder: (context, constraints) {
-              if (constraints.maxWidth > 600) {
-                return Row(children: [
-                  Text(
-                    "${widget.movieData.title} ${widget.movieData.year}",
-                    style: cinemaHeaderStyle,
-                  ),
-                  SizedBox(width: 16),
-                  Text("${widget.movieData.rating}", style: cinemaHeaderStyle),
-                ]);
-              } else {
-                return Column(children: [
-                  Text(
-                    "${widget.movieData.title} ${widget.movieData.year}",
-                    style: cinemaHeaderStyle,
-                  ),
-                  SizedBox(width: 16),
-                  Text("${widget.movieData.rating}", style: cinemaHeaderStyle),
-                ]);
-              }
-            }),
+            Row(
+              children: [
+                Text(
+                  "${widget.movieData.title}",
+                  style: cinemaHeaderStyle,
+                ),
+                SizedBox(width: 16.0),
+                Text("${widget.movieData.year} ${widget.movieData.rating}", style: movieListingSubStyle,)
+              ],
+            ),
             LayoutBuilder(builder: (context, constraints) {
               if (constraints.maxWidth > 600) {
                 return Row(children: [
