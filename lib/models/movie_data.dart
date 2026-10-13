@@ -1,7 +1,7 @@
 class MovieData {
   final String id;
   final String title;
-  final String year;
+  final int year;
   final String rating;
   final String description;
   final String imagePath;
