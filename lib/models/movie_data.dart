@@ -1,6 +1,7 @@
 class MovieData {
   final String id;
   final String title;
+  final String year;
   final String rating;
   final String description;
   final String imagePath;
@@ -9,6 +10,7 @@ class MovieData {
   const MovieData({
     required this.id,
     required this.title,
+    required this.year,
     required this.rating,
     required this.description,
     required this.imagePath,
