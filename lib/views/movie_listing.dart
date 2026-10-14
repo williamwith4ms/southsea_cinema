@@ -44,7 +44,7 @@ class _MovieListingState extends State<MovieListing> {
             Row(
               children: [
                 Text(
-                  "${widget.movieData.title}",
+                  widget.movieData.title,
                   style: cinemaHeaderStyle,
                 ),
                 SizedBox(width: 16.0),
@@ -54,7 +54,7 @@ class _MovieListingState extends State<MovieListing> {
             LayoutBuilder(builder: (context, constraints) {
               if (constraints.maxWidth > 600) {
                 return Row(children: [
-                  Text("${widget.movieData.date}", style: movieListingSubStyle),
+                  Text(widget.movieData.date, style: movieListingSubStyle),
                 ]);
               } else {
                 return Column(
@@ -67,7 +67,7 @@ class _MovieListingState extends State<MovieListing> {
             }),
             SizedBox(height: 16),
             Text(
-              "${widget.movieData.description}",
+              widget.movieData.description,
               style: movieListingBodyStyle,
             ),
             SizedBox(height: 16),
