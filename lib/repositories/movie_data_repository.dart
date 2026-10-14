@@ -38,4 +38,14 @@ class MovieDataRepository {
         )
     ];
   }
+
+  MovieData? getMovieDataById(String id) {
+    final List<MovieData> allMovies = getAllMovies();
+    for (final MovieData movie in allMovies) {
+      if (movie.id == id) {
+        return movie;
+      }
+    }
+    return null;
+  }
 }
