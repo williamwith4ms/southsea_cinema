@@ -109,7 +109,7 @@ class _MovieListingState extends State<MovieListing> {
                     SizedBox(
                       width: 10,
                     ),
-                    Text("Adult (£7.50)", style: movieListingBodyStyle)
+                    Text("Adult ${widget.movieData.formattedPrice}", style: movieListingBodyStyle)
                   ],
                 );
               } else {
@@ -140,7 +140,7 @@ class _MovieListingState extends State<MovieListing> {
                     SizedBox(
                       width: 10,
                     ),
-                    Text("Adult (£7.50)", style: movieListingBodyStyle)
+                    Text("Adult ${widget.movieData.formattedPrice}", style: movieListingBodyStyle)
                   ],
                 );
               }
