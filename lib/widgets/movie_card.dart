@@ -55,14 +55,10 @@ class MovieCard extends StatelessWidget {
                   decoration: BoxDecoration(color: cinemaBrand),
                   child: TextButton(
                       onPressed: () {
-                        Navigator.push(
-                          context, 
-                          MaterialPageRoute(
-                            builder: (context) {
-                              return MovieListing(movieData: movieData);
-                            }
-                          )
-                        );
+                        Navigator.push(context,
+                            MaterialPageRoute(builder: (context) {
+                          return MovieListing(movieData: movieData);
+                        }));
                       },
                       child: Text(
                         "Order Tickets",

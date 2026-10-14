@@ -9,7 +9,8 @@ void main() {
   // });
 
   group("Home View Tests", () {
-    testWidgets("App loads and contains movie cards", (WidgetTester tester) async {
+    testWidgets("App loads and contains movie cards",
+        (WidgetTester tester) async {
       await tester.pumpWidget(const SouthseaCinemaApp());
 
       expect(find.byType(MovieCard), findsWidgets);
@@ -21,11 +22,15 @@ void main() {
       expect(find.text('Southsea Cinema & Art Centre'), findsOneWidget);
     });
 
-    testWidgets("Check the first card loads and contains the correct data", (WidgetTester tester) async {
+    testWidgets("Check the first card loads and contains the correct data",
+        (WidgetTester tester) async {
       await tester.pumpWidget(const SouthseaCinemaApp());
 
       expect(find.text("Crimson Tide"), findsOneWidget);
-      expect(find.text("On a U.S. nuclear missile sub, a young First Officer stages a mutiny to prevent his trigger-happy Captain from launching his missiles before confirming his orders to do so."), findsOneWidget);
+      expect(
+          find.text(
+              "On a U.S. nuclear missile sub, a young First Officer stages a mutiny to prevent his trigger-happy Captain from launching his missiles before confirming his orders to do so."),
+          findsOneWidget);
     });
   });
 }

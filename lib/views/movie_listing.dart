@@ -48,7 +48,10 @@ class _MovieListingState extends State<MovieListing> {
                   style: cinemaHeaderStyle,
                 ),
                 SizedBox(width: 16.0),
-                Text("${widget.movieData.year} ${widget.movieData.rating}", style: movieListingSubStyle,)
+                Text(
+                  "${widget.movieData.year} ${widget.movieData.rating}",
+                  style: movieListingSubStyle,
+                )
               ],
             ),
             LayoutBuilder(builder: (context, constraints) {
@@ -109,7 +112,8 @@ class _MovieListingState extends State<MovieListing> {
                     SizedBox(
                       width: 10,
                     ),
-                    Text("Adult ${widget.movieData.formattedPrice}", style: movieListingBodyStyle)
+                    Text("Adult ${widget.movieData.formattedPrice}",
+                        style: movieListingBodyStyle)
                   ],
                 );
               } else {
@@ -140,7 +144,8 @@ class _MovieListingState extends State<MovieListing> {
                     SizedBox(
                       width: 10,
                     ),
-                    Text("Adult ${widget.movieData.formattedPrice}", style: movieListingBodyStyle)
+                    Text("Adult ${widget.movieData.formattedPrice}",
+                        style: movieListingBodyStyle)
                   ],
                 );
               }
