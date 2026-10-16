@@ -34,6 +34,11 @@ class _MovieListingState extends State<MovieListing> {
         backgroundColor: cinemaSurface,
         iconTheme: const IconThemeData(color: cinemaBrand),
         elevation: 0,
+        leading: IconButton(
+            onPressed: () {
+              Navigator.pop((context));
+            },
+            icon: Icon(Icons.arrow_back)),
       ),
       drawer: const NavDrawer(),
       body: Container(
