@@ -68,8 +68,7 @@ class _MovieListingState extends State<MovieListing> {
                 return Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      Text("- ${widget.movieData.date}",
-                          style: movieListingSubStyle),
+                      Text(widget.movieData.date, style: movieListingSubStyle),
                     ]);
               }
             }),
