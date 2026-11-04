@@ -11,7 +11,7 @@ class HomeView extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final MovieDataRepository repository = MovieDataRepository();
-    final List<MovieData> movieData = repository.getAllMovies();
+    final List<MovieData> movieDatas = repository.getAllMovies();
 
     return Scaffold(
         appBar: AppBar(
@@ -43,9 +43,9 @@ class HomeView extends StatelessWidget {
         //   ),
         // ),
         body: ListView.builder(
-          itemCount: movieData.length,
+          itemCount: movieDatas.length,
           itemBuilder: (context, index) {
-            return MovieCard(movieData: movieData[index]);
+            return MovieCard(movieData: movieDatas[index]);
           },
         ));
   }
