@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:southsea_cinema/constants.dart';
 import 'package:southsea_cinema/models/movie_data.dart';
 import 'package:southsea_cinema/views/movie_listing.dart';
+import 'package:southsea_cinema/widgets/squared_button.dart';
 
 class MovieCard extends StatelessWidget {
   final MovieData movieData;
@@ -53,17 +54,15 @@ class MovieCard extends StatelessWidget {
                 Text(movieData.date),
                 Container(
                   decoration: BoxDecoration(color: cinemaBrand),
-                  child: TextButton(
-                      onPressed: () {
-                        Navigator.push(context,
-                            MaterialPageRoute(builder: (context) {
-                          return MovieListing(movieData: movieData);
-                        }));
-                      },
-                      child: Text(
-                        "Order Tickets",
-                        style: movieListingBodyStyle,
-                      )),
+                  child: SquaredButton(
+                    label: "Order Tickets",
+                    onPressed: () {
+                      Navigator.push(context,
+                          MaterialPageRoute(builder: (context) {
+                        return MovieListing(movieData: movieData);
+                      }));
+                    },
+                  ),
                 ),
               ],
             )

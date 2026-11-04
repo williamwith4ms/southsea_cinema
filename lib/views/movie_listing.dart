@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:southsea_cinema/constants.dart';
 import 'package:southsea_cinema/models/movie_data.dart';
 import 'package:southsea_cinema/widgets/nav_drawer.dart';
+import 'package:southsea_cinema/widgets/squared_button.dart';
 
 // class MovieListing extends StatelessWidget {
 // const MovieListing({super.key});
@@ -151,16 +152,14 @@ class _MovieListingState extends State<MovieListing> {
               children: [
                 Container(
                   decoration: BoxDecoration(color: cinemaBrand),
-                  child: TextButton(
-                      onPressed: () {
-                        setState(() {
-                          _orderedTickets = _dropdownTickets;
-                        });
-                      },
-                      child: Text(
-                        "Add to Order",
-                        style: movieListingBodyStyle,
-                      )),
+                  child: SquaredButton(
+                    label: "Add to Order",
+                    onPressed: () {
+                      setState(() {
+                        _orderedTickets = _dropdownTickets;
+                      });
+                    },
+                  ),
                 ),
                 SizedBox(
                   width: 10,
