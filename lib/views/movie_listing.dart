@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:southsea_cinema/constants.dart';
+import 'package:southsea_cinema/models/cart_item.dart';
 import 'package:southsea_cinema/models/movie_data.dart';
+import 'package:southsea_cinema/repositories/cart_repository.dart';
 import 'package:southsea_cinema/widgets/nav_drawer.dart';
 import 'package:southsea_cinema/widgets/squared_button.dart';
 
@@ -24,8 +26,23 @@ class MovieListing extends StatefulWidget {
 }
 
 class _MovieListingState extends State<MovieListing> {
-  int _dropdownTickets = 0;
-  int _orderedTickets = 0;
+  int _tickets = 0;
+  String _confirmation_message = "";
+
+  void _addToBasket() {
+    if (_tickets > 0) {
+      final CartItem item =
+          CartItem(movieData: widget.movieData, quantity: _tickets);
+      CartRepository.instance.addItem(item);
+      setState(() {
+        _confirmation_message = "Added $_tickets tickets to your basket.";
+      });
+    } else {
+      setState(() {
+        _confirmation_message = "Please select at least one ticket.";
+      });
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -92,7 +109,7 @@ class _MovieListingState extends State<MovieListing> {
                         onSelected: (int? value) {
                           if (value != null) {
                             setState(() {
-                              _dropdownTickets = value;
+                              _tickets = value;
                             });
                           }
                         },
@@ -124,7 +141,7 @@ class _MovieListingState extends State<MovieListing> {
                         onSelected: (int? value) {
                           if (value != null) {
                             setState(() {
-                              _dropdownTickets = value;
+                              _tickets = value;
                             });
                           }
                         },
@@ -156,7 +173,7 @@ class _MovieListingState extends State<MovieListing> {
                     label: "Add to Order",
                     onPressed: () {
                       setState(() {
-                        _orderedTickets = _dropdownTickets;
+                        _addToBasket();
                       });
                     },
                   ),
@@ -164,29 +181,12 @@ class _MovieListingState extends State<MovieListing> {
                 SizedBox(
                   width: 10,
                 ),
-                OrderStatus(_orderedTickets),
+                Text(_confirmation_message, style: movieListingBodyStyle)
               ],
             )
           ],
         ),
       ),
-    );
-  }
-}
-
-class OrderStatus extends StatelessWidget {
-  final int tickets;
-
-  const OrderStatus(this.tickets, {super.key});
-
-  @override
-  Widget build(BuildContext context) {
-    if (tickets == 0) {
-      return Text("");
-    }
-    return Text(
-      "$tickets ticket package in order",
-      style: movieListingSubStyle,
     );
   }
 }
