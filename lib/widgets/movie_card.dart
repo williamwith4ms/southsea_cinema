@@ -25,11 +25,11 @@ class MovieCard extends StatelessWidget {
                 SizedBox(
                   width: 16.0,
                 ),
-                Text("(${movieData.rating})", style: movieListingSubStyle),
+                Text("(${movieData.rating})", style: cinemaSubHeaderStyle),
                 SizedBox(
                   width: 16.0,
                 ),
-                Text(movieData.year.toString(), style: movieListingSubStyle)
+                Text(movieData.year.toString(), style: cinemaSubHeaderStyle)
               ],
             ),
             Row(crossAxisAlignment: CrossAxisAlignment.start, children: [

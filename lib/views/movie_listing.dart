@@ -65,20 +65,20 @@ class _MovieListingState extends State<MovieListing> {
                 SizedBox(width: 16.0),
                 Text(
                   "${widget.movieData.year} ${widget.movieData.rating}",
-                  style: movieListingSubStyle,
+                  style: cinemaSubHeaderStyle,
                 )
               ],
             ),
             LayoutBuilder(builder: (context, constraints) {
               if (constraints.maxWidth > 600) {
                 return Row(children: [
-                  Text(widget.movieData.date, style: movieListingSubStyle),
+                  Text(widget.movieData.date, style: cinemaSubHeaderStyle),
                 ]);
               } else {
                 return Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      Text(widget.movieData.date, style: movieListingSubStyle),
+                      Text(widget.movieData.date, style: cinemaSubHeaderStyle),
                     ]);
               }
             }),
@@ -95,7 +95,7 @@ class _MovieListingState extends State<MovieListing> {
             SizedBox(height: 16),
             Text("Tickets", style: cinemaHeaderStyle),
             Text("(Select quantity up to 5 total)",
-                style: movieListingSubStyle),
+                style: cinemaSubHeaderStyle),
             SizedBox(height: 16),
             LayoutBuilder(builder: (context, constraints) {
               if (constraints.maxWidth > 600) {
