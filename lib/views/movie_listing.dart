@@ -27,7 +27,7 @@ class MovieListing extends StatefulWidget {
 
 class _MovieListingState extends State<MovieListing> {
   int _tickets = 0;
-  String _confirmation_message = "";
+  String _confirmationMessage = "";
 
   void _addToBasket() {
     if (_tickets > 0) {
@@ -35,11 +35,11 @@ class _MovieListingState extends State<MovieListing> {
           CartItem(movieData: widget.movieData, quantity: _tickets);
       CartRepository.instance.addItem(item);
       setState(() {
-        _confirmation_message = "Added $_tickets tickets to your basket.";
+        _confirmationMessage = "Added $_tickets tickets to your basket.";
       });
     } else {
       setState(() {
-        _confirmation_message = "Please select at least one ticket.";
+        _confirmationMessage = "Please select at least one ticket.";
       });
     }
   }
@@ -181,7 +181,7 @@ class _MovieListingState extends State<MovieListing> {
                 SizedBox(
                   width: 10,
                 ),
-                Text(_confirmation_message, style: movieListingBodyStyle)
+                Text(_confirmationMessage, style: movieListingBodyStyle)
               ],
             )
           ],
