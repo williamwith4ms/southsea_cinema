@@ -31,7 +31,8 @@ class _SettingsViewState extends State<SettingsView> {
     final String? savedAddress = await prefs.getString(prefAddress);
     final String? savedEmail = await prefs.getString(prefEmail);
     final String? savedPatronNumber = await prefs.getString(prefPatronNumber);
-    final bool? savedReceiveEmailNews = await prefs.getBool(prefReceiveEmailNews);
+    final bool? savedReceiveEmailNews =
+        await prefs.getBool(prefReceiveEmailNews);
 
     String address = "";
     if (savedAddress != null) {
@@ -50,7 +51,7 @@ class _SettingsViewState extends State<SettingsView> {
       receiveEmailNews = savedReceiveEmailNews;
     }
 
-    if(!mounted) {
+    if (!mounted) {
       return;
     }
 
@@ -98,7 +99,7 @@ class _SettingsViewState extends State<SettingsView> {
       receiveEmailNews: _recieveEmailNews,
     );
 
-    if(!mounted) {
+    if (!mounted) {
       return;
     }
 

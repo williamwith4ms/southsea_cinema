@@ -53,7 +53,5 @@ void main() {
 
       expect(repository.getAllMovies(), movies);
     });
-
   });
-
 }
