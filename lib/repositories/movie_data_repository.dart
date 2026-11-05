@@ -11,7 +11,7 @@ class MovieDataRepository {
           description:
               "On a U.S. nuclear missile sub, a young First Officer stages a mutiny to prevent his trigger-happy Captain from launching his missiles before confirming his orders to do so.",
           imagePath: "assets/images/crimson-tide.jpg",
-          date: "Thurs, 22nd Oct 2026, 18:00",
+          date: "Thr, 22nd Oct 2026, 18:00",
           price: 7.50),
       MovieData(
           id: "avatar",

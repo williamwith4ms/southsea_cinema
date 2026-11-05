@@ -12,7 +12,7 @@ void main() {
           description:
               "On a U.S. nuclear missile sub, a young First Officer stages a mutiny to prevent his trigger-happy Captain from launching his missiles before confirming his orders to do so.",
           imagePath: "assets/images/crimson-tide.jpg",
-          date: "Thurs, 22th Oct 2026, 18:00",
+          date: "Thr, 22th Oct 2026, 18:00",
           price: 7.50);
 
       expect(movieData.id, "crimson-tide");
@@ -22,7 +22,7 @@ void main() {
       expect(movieData.description,
           "On a U.S. nuclear missile sub, a young First Officer stages a mutiny to prevent his trigger-happy Captain from launching his missiles before confirming his orders to do so.");
       expect(movieData.imagePath, "assets/images/crimson-tide.jpg");
-      expect(movieData.date, "Thurs, 22th Oct 2026, 18:00");
+      expect(movieData.date, "Thr, 22th Oct 2026, 18:00");
       expect(movieData.price, 7.50);
     });
 
@@ -36,7 +36,7 @@ void main() {
             description:
                 "On a U.S. nuclear missile sub, a young First Officer stages a mutiny to prevent his trigger-happy Captain from launching his missiles before confirming his orders to do so.",
             imagePath: "assets/images/crimson-tide.jpg",
-            date: "Thurs, 22th Oct 2026, 18:00",
+            date: "Thr, 22th Oct 2026, 18:00",
             price: 7.00);
 
         expect(movieData.formattedPrice, '£7.00');
@@ -50,7 +50,7 @@ void main() {
             description:
                 "On a U.S. nuclear missile sub, a young First Officer stages a mutiny to prevent his trigger-happy Captain from launching his missiles before confirming his orders to do so.",
             imagePath: "assets/images/crimson-tide.jpg",
-            date: "Thurs, 22th Oct 2026, 18:00",
+            date: "Thr, 22th Oct 2026, 18:00",
             price: 7.99);
 
         expect(movieData.formattedPrice, '£7.99');
