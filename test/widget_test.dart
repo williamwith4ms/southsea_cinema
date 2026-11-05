@@ -81,7 +81,7 @@ void main() {
       await tester.tap(find.text("Add to Order"));
       await tester.pumpAndSettle();
 
-      expect(find.text("2 ticket package in order"), findsOneWidget);
+      expect(find.text("Added 2 tickets to your basket."), findsOneWidget);
     });
   });
 }
