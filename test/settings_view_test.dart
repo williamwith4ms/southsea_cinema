@@ -4,7 +4,8 @@ import 'package:southsea_cinema/views/settings_view.dart';
 
 void main() {
   group("Settings View Tests", () {
-    testWidgets("Settings view displays correctly and conatins TetFields and Switch",
+    testWidgets(
+        "Settings view displays correctly and conatins TetFields and Switch",
         (WidgetTester tester) async {
       await tester.pumpWidget(const MaterialApp(home: SettingsView()));
 
@@ -18,14 +19,18 @@ void main() {
       expect(find.byType(Switch), findsOneWidget);
     });
 
-    testWidgets("Settings view saves settings and displays confirmation message",
+    testWidgets(
+        "Settings view saves settings and displays confirmation message",
         (WidgetTester tester) async {
       await tester.pumpWidget(const MaterialApp(home: SettingsView()));
 
-      final Finder addressField = find.widgetWithText(TextField, "Enter your address");
-      final Finder emailField = find.widgetWithText(TextField, "Enter your email");
-      final Finder patronNumberField = find.widgetWithText(TextField, "Enter your patron number");
-      
+      final Finder addressField =
+          find.widgetWithText(TextField, "Enter your address");
+      final Finder emailField =
+          find.widgetWithText(TextField, "Enter your email");
+      final Finder patronNumberField =
+          find.widgetWithText(TextField, "Enter your patron number");
+
       await tester.enterText(addressField, "123 Test Street");
       await tester.enterText(emailField, "email@example.com");
       await tester.enterText(patronNumberField, "1234");
@@ -34,7 +39,7 @@ void main() {
       expect(tester.widget<Switch>(switchFinder).value, isFalse);
       await tester.tap(switchFinder);
       await tester.pumpAndSettle();
-      expect(tester.widget<Switch>(switchFinder).value, isTrue);  
+      expect(tester.widget<Switch>(switchFinder).value, isTrue);
 
       await tester.tap(find.text("Save settings"));
       await tester.pumpAndSettle();

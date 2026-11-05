@@ -33,15 +33,20 @@ void main() {
   });
 
   group("Basket View Tests", () {
-    testWidgets("Basket view displays empty message when cart has no items", (WidgetTester tester) async {
+    testWidgets("Basket view displays empty message when cart has no items",
+        (WidgetTester tester) async {
       await tester.pumpWidget(const MaterialApp(home: BasketView()));
 
       expect(find.text("Your basket is empty."), findsOneWidget);
-      expect(find.text("Your order has been placed successfully"), findsNothing);
+      expect(
+          find.text("Your order has been placed successfully"), findsNothing);
     });
 
-    testWidgets("Basket view renders items and removes item when delete pressed", (WidgetTester tester) async {
-      CartRepository.instance.addItem(CartItem(movieData: testMovie1, quantity: 2));
+    testWidgets(
+        "Basket view renders items and removes item when delete pressed",
+        (WidgetTester tester) async {
+      CartRepository.instance
+          .addItem(CartItem(movieData: testMovie1, quantity: 2));
 
       await tester.pumpWidget(const MaterialApp(home: BasketView()));
 
@@ -55,8 +60,10 @@ void main() {
       expect(find.text("Your basket is empty."), findsOneWidget);
     });
 
-    testWidgets("Basket view displays confirmation message when order placed", (WidgetTester tester) async {
-      CartRepository.instance.addItem(CartItem(movieData: testMovie1, quantity: 2));
+    testWidgets("Basket view displays confirmation message when order placed",
+        (WidgetTester tester) async {
+      CartRepository.instance
+          .addItem(CartItem(movieData: testMovie1, quantity: 2));
 
       await tester.pumpWidget(const MaterialApp(home: BasketView()));
 
@@ -67,12 +74,16 @@ void main() {
       await tester.tap(find.text("Buy Tickets"));
       await tester.pumpAndSettle();
 
-      expect(find.text("Your order has been placed successfully"), findsOneWidget);
+      expect(
+          find.text("Your order has been placed successfully"), findsOneWidget);
     });
 
-    testWidgets("Basket view line delete button removes tickets", (WidgetTester tester) async {
-      CartRepository.instance.addItem(CartItem(movieData: testMovie1, quantity: 1));
-      CartRepository.instance.addItem(CartItem(movieData: testMovie2, quantity: 1));
+    testWidgets("Basket view line delete button removes tickets",
+        (WidgetTester tester) async {
+      CartRepository.instance
+          .addItem(CartItem(movieData: testMovie1, quantity: 1));
+      CartRepository.instance
+          .addItem(CartItem(movieData: testMovie2, quantity: 1));
 
       await tester.pumpWidget(const MaterialApp(home: BasketView()));
 

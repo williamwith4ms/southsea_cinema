@@ -18,7 +18,8 @@ void main() {
     expect(find.text("Order"), findsOneWidget);
   });
 
-  testWidgets('SquaredButton invokes onPressed when tapped', (WidgetTester tester) async {
+  testWidgets('SquaredButton invokes onPressed when tapped',
+      (WidgetTester tester) async {
     bool wasPressed = false;
 
     await tester.pumpWidget(

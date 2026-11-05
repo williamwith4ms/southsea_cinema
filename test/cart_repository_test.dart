@@ -25,7 +25,6 @@ const MovieData testMovie2 = MovieData(
     date: "Fri, 23rd Oct 2026, 18:00",
     price: 8.00);
 
-
 void main() {
   setUp(() {
     CartRepository.instance.clearCart();
@@ -37,7 +36,7 @@ void main() {
       expect(cartRepository.totalItemCount, 0);
       expect(cartRepository.getSubtotal(), 0.0);
       expect(cartRepository.getBookingFee(), 1.50);
-      expect(cartRepository .getTotalPrice(), 1.50);
+      expect(cartRepository.getTotalPrice(), 1.50);
     });
   });
 
