@@ -56,5 +56,50 @@ void main() {
         expect(movieData.formattedPrice, '£7.99');
       });
     });
+
+    group("Json tests", () {
+      test("JSON conversion perserves every field", () {
+        final Map<String, dynamic> json = {
+          'id': "crimson-tide",
+          'title': "Crimson Tide",
+          'year': 1995,
+          'rating': "R",
+          'description':
+              "On a U.S. nuclear missile sub, a young First Officer stages a mutiny to prevent his trigger-happy Captain from launching his missiles before confirming his orders to do so.",
+          'imagePath': "assets/images/crimson-tide.jpg",
+          'date': "Thr, 22th Oct 2026, 18:00",
+          'price': 7.50
+        };
+        final MovieData movieData = MovieData.fromJson(json);
+
+        expect(movieData.id, "crimson-tide");
+        expect(movieData.title, "Crimson Tide");
+        expect(movieData.year, 1995);
+        expect(movieData.rating, "R");
+        expect(movieData.description,
+            "On a U.S. nuclear missile sub, a young First Officer stages a mutiny to prevent his trigger-happy Captain from launching his missiles before confirming his orders to do so.");
+        expect(movieData.imagePath, "assets/images/crimson-tide.jpg");
+        expect(movieData.date, "Thr, 22th Oct 2026, 18:00");
+        expect(movieData.price, 7.50);
+
+        expect(movieData.toJson(), json);
+      });
+      test("fromJSon accepts a whole number price", () {
+        final Map<String, dynamic> json = {
+          'id': "crimson-tide",
+          'title': "Crimson Tide",
+          'year': 1995,
+          'rating': "R",
+          'description':
+              "On a U.S. nuclear missile sub, a young First Officer stages a mutiny to prevent his trigger-happy Captain from launching his missiles before confirming his orders to do so.",
+          'imagePath': "assets/images/crimson-tide.jpg",
+          'date': "Thr, 22th Oct 2026, 18:00",
+          'price': 7
+        };
+        final MovieData movieData = MovieData.fromJson(json);
+        expect(movieData.price, 7.00);
+        expect(movieData.price, isA<double>());
+      });
+    });
   });
 }
