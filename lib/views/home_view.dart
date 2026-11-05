@@ -13,41 +13,62 @@ class HomeView extends StatefulWidget {
 }
 
 class _HomeViewState extends State<HomeView> {
+  List<MovieData> _movieDatas = [];
+  bool _loading = true;
+  String _errorMessage = "";
+
+  @override
+  void initState() {
+    super.initState();
+    _loadMovies();
+  }
+
+  Future<void> _loadMovies() async {
+    try {
+      final MovieDataRepository repository = MovieDataRepository();
+      final List<MovieData> movieDatas = await repository.loadMoviesFromAsset();
+      if (!mounted) {
+        return;
+      }
+      setState(() {
+        _movieDatas = movieDatas;
+        _loading = false;
+      });
+    } catch (error) {
+      if (!mounted) {
+        return;
+      }
+      setState(() {
+        _errorMessage = "Could not load movies: $error";
+        _loading = false;
+      });
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
-    final MovieDataRepository repository = MovieDataRepository();
-    final List<MovieData> movieDatas = repository.getAllMovies();
+    final Widget body;
+
+    if (_loading) {
+      body = const Center(child: CircularProgressIndicator());
+    } else if (_errorMessage.isNotEmpty) {
+      body = Center(child: Text(_errorMessage));
+    } else {
+      body = ListView.builder(
+        itemCount: _movieDatas.length,
+        itemBuilder: (context, index) {
+          final MovieData movieData = _movieDatas[index];
+          return MovieCard(movieData: movieData);
+        },
+      );
+    }
 
     return Scaffold(
-        appBar: AppBar(
-          title: const Text(
-            appTitle,
-          ),
-        ),
-        drawer: const NavDrawer(),
-        // body: const Center(
-        //   child: Padding(
-        //     padding: EdgeInsets.all(16.0),
-        //     child: Column(
-        //       mainAxisAlignment: MainAxisAlignment.center,
-        //       children: [
-        //         Text(
-        //           'Welcome to $appTitle',
-        //           style: TextStyle(
-        //             color: cinemaFontWhite,
-        //             fontSize: 22,
-        //             fontWeight: FontWeight.bold,
-        //           ),
-        //         ),
-        //       ],
-        //     ),
-        //   ),
-        // ),
-        body: ListView.builder(
-          itemCount: movieDatas.length,
-          itemBuilder: (context, index) {
-            return MovieCard(movieData: movieDatas[index]);
-          },
-        ));
+      appBar: AppBar(
+        title: const Text(appTitle),
+      ),
+      drawer: const NavDrawer(),
+      body: body,
+    );
   }
 }
