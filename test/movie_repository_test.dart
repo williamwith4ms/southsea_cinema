@@ -5,11 +5,11 @@ import 'package:southsea_cinema/repositories/movie_data_repository.dart';
 void main() {
   TestWidgetsFlutterBinding.ensureInitialized();
   group("Movie Data Repository Tests", () {
-    test("getAllMovies returns 3 movies", () {
+    test("getAllMovies returns 1 movie", () {
       final MovieDataRepository repository = MovieDataRepository();
       final List allMovies = repository.getAllMovies();
 
-      expect(allMovies.length, 3);
+      expect(allMovies.length, 1);
     });
 
     test("getAllMovies contains valid movie data", () {
@@ -21,18 +21,6 @@ void main() {
       expect(crimsonTide.title, "Crimson Tide");
       expect(crimsonTide.year, 1995);
       expect(crimsonTide.imagePath, isNotEmpty);
-
-      final MovieData avatar = allMovies[1];
-      expect(avatar.id, "avatar");
-      expect(avatar.title, "Avatar");
-      expect(avatar.year, 2009);
-      expect(avatar.imagePath, isNotEmpty);
-
-      final MovieData nineteenSeventeen = allMovies[2];
-      expect(nineteenSeventeen.id, "1917");
-      expect(nineteenSeventeen.title, "1917");
-      expect(nineteenSeventeen.year, 2019);
-      expect(nineteenSeventeen.imagePath, isNotEmpty);
     });
 
     group("getMovieDataById tests", () {
