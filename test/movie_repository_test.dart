@@ -3,6 +3,7 @@ import 'package:southsea_cinema/models/movie_data.dart';
 import 'package:southsea_cinema/repositories/movie_data_repository.dart';
 
 void main() {
+  TestWidgetsFlutterBinding.ensureInitialized();
   group("Movie Data Repository Tests", () {
     test("getAllMovies returns 3 movies", () {
       final MovieDataRepository repository = MovieDataRepository();
@@ -52,5 +53,19 @@ void main() {
         expect(movie, null);
       });
     });
+
+    test("loadMoviesFromAsset reads the bundled JSON file", () async {
+      final MovieDataRepository repository = MovieDataRepository();
+      final List<MovieData> movies = await repository.loadMoviesFromAsset();
+
+      expect(movies.length, 3);
+      expect(movies[0].id, "crimson-tide");
+      expect(movies[1].id, "avatar");
+      expect(movies[2].id, "1917");
+
+      expect(repository.getAllMovies(), movies);
+    });
+
   });
+
 }
