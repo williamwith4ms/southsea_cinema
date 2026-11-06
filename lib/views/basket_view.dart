@@ -118,7 +118,18 @@ class _BasketViewState extends State<BasketView> {
     children.add(Row(
       mainAxisAlignment: MainAxisAlignment.spaceEvenly,
       children: [
-        SquaredButton(label: "Update Order", onPressed: () {}),
+        ElevatedButton(
+            onPressed: () {
+              setState(() {
+                cart.clearCart();
+                _confirmationMessage = "Your cart has been cleared";
+              });
+            },
+            style: ElevatedButton.styleFrom(
+                backgroundColor: cinemaSurface,
+                foregroundColor: cinemaFontWhite,
+                shape: RoundedRectangleBorder(borderRadius: BorderRadius.zero)),
+            child: const Text("Cancel Order")),
         SquaredButton(
             label: "Buy Tickets",
             onPressed: () {

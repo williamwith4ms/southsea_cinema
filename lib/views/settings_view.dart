@@ -184,7 +184,11 @@ class _SettingsViewState extends State<SettingsView> {
             const SizedBox(height: 16.0),
             Row(
               children: [
-                SquaredButton(label: "Cancel", onPressed: () {}),
+                SquaredButton(
+                    label: "Cancel",
+                    onPressed: () {
+                      Navigator.pop(context);
+                    }),
                 const SizedBox(width: 16.0),
                 SquaredButton(
                   label: "Save settings",
