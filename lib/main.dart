@@ -15,7 +15,6 @@ bool isSupportedPlatform() {
   return false;
 }
 
-
 void main() {
   if (isSupportedPlatform()) {
     runApp(const SouthseaCinemaApp());
