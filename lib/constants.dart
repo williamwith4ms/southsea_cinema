@@ -11,12 +11,14 @@ const Color cinemaFontWhite = Color(0xFFFFFFFF);
 const Color cinemaFontMuted = Color(0xFF8A90A0);
 const Color cinemaSurface = Color(0xFF242936);
 
+const Color cinemaLightBackground = Color(0xFFF5F7FA);
+const Color cinemaLightSurface = Color(0xFFFFFFFF);
+const Color cinemaLightFont = Color(0xFF1B1E28);
+
 const TextStyle cinemaHeaderStyle = TextStyle(
-  color: cinemaFontWhite,
   fontSize: 18,
   fontWeight: FontWeight.bold,
 );
 
-const movieListingBodyStyle = TextStyle(color: cinemaFontWhite, fontSize: 14);
-const TextStyle cinemaSubHeaderStyle =
-    TextStyle(color: cinemaFontMuted, fontSize: 14);
+const movieListingBodyStyle = TextStyle(fontSize: 14);
+const TextStyle cinemaSubHeaderStyle = TextStyle(fontSize: 14);

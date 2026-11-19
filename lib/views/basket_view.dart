@@ -71,7 +71,6 @@ class _BasketViewState extends State<BasketView> {
           itemBuilder: (BuildContext context, int index) {
             final Booking booking = _bookings[index];
             return Card(
-              color: cinemaSurface,
               margin: const EdgeInsets.symmetric(vertical: 8.0),
               child: Padding(
                 padding: const EdgeInsets.all(16.0),
@@ -220,8 +219,8 @@ class _BasketViewState extends State<BasketView> {
               });
             },
             style: ElevatedButton.styleFrom(
-                backgroundColor: cinemaSurface,
-                foregroundColor: cinemaFontWhite,
+                backgroundColor: Theme.of(context).colorScheme.surface,
+                foregroundColor: Theme.of(context).colorScheme.onSurface,
                 shape: RoundedRectangleBorder(borderRadius: BorderRadius.zero)),
             child: const Text("Cancel Order")),
         SquaredButton(

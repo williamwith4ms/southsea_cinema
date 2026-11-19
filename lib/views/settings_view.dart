@@ -9,9 +9,15 @@ const String prefAddress = 'user_address';
 const String prefEmail = 'user_email';
 const String prefPatronNumber = 'user_patron_number';
 const String prefReceiveEmailNews = 'user_receive_email_news';
+const String prefThemeMode = 'user_theme_mode';
 
 class SettingsView extends StatefulWidget {
-  const SettingsView({super.key});
+  final ValueChanged<ThemeMode>? onThemeModeChanged;
+
+  const SettingsView({
+    super.key,
+    this.onThemeModeChanged,
+  });
 
   @override
   State<StatefulWidget> createState() {
@@ -24,6 +30,7 @@ class _SettingsViewState extends State<SettingsView> {
   late TextEditingController _emailController;
   late TextEditingController _patronNumberController;
   bool _recieveEmailNews = false;
+  bool _darkMode = true;
   String _confirmationMessage = "";
 
   Future<void> _loadSettings() async {
@@ -33,6 +40,7 @@ class _SettingsViewState extends State<SettingsView> {
     final String? savedPatronNumber = await prefs.getString(prefPatronNumber);
     final bool? savedReceiveEmailNews =
         await prefs.getBool(prefReceiveEmailNews);
+    final String? savedThemeMode = await prefs.getString(prefThemeMode);
 
     String address = "";
     if (savedAddress != null) {
@@ -60,6 +68,7 @@ class _SettingsViewState extends State<SettingsView> {
       _emailController.text = email;
       _patronNumberController.text = patronNumber;
       _recieveEmailNews = receiveEmailNews;
+      _darkMode = savedThemeMode != 'light';
     });
   }
 
@@ -91,6 +100,13 @@ class _SettingsViewState extends State<SettingsView> {
     await prefs.setString(prefEmail, email);
     await prefs.setString(prefPatronNumber, patronNumber);
     await prefs.setBool(prefReceiveEmailNews, _recieveEmailNews);
+    await prefs.setString(
+      prefThemeMode,
+      _darkMode ? 'dark' : 'light',
+    );
+    widget.onThemeModeChanged?.call(
+      _darkMode ? ThemeMode.dark : ThemeMode.light,
+    );
 
     // final UserSettings settings = UserSettings(
     //   address: address,
@@ -173,10 +189,25 @@ class _SettingsViewState extends State<SettingsView> {
                 "Receive news by email",
               )),
               Switch(
+                key: const Key('receive_news_switch'),
                 value: _recieveEmailNews,
                 onChanged: (bool value) {
                   setState(() {
                     _recieveEmailNews = value;
+                  });
+                },
+              ),
+            ]),
+            Row(children: [
+              const Expanded(
+                child: Text("Dark mode"),
+              ),
+              Switch(
+                key: const Key('theme_mode_switch'),
+                value: _darkMode,
+                onChanged: (bool value) {
+                  setState(() {
+                    _darkMode = value;
                   });
                 },
               ),

@@ -24,7 +24,7 @@ void main() {
       expect(find.text("Preferences"), findsOneWidget);
 
       expect(find.byType(TextField), findsNWidgets(3));
-      expect(find.byType(Switch), findsOneWidget);
+      expect(find.byType(Switch), findsNWidgets(2));
     });
 
     testWidgets(
@@ -44,12 +44,13 @@ void main() {
       await tester.enterText(emailField, "email@example.com");
       await tester.enterText(patronNumberField, "1234");
 
-      final Finder switchFinder = find.byType(Switch);
+      final Finder switchFinder = find.byKey(const Key('receive_news_switch'));
       expect(tester.widget<Switch>(switchFinder).value, isFalse);
       await tester.tap(switchFinder);
       await tester.pumpAndSettle();
       expect(tester.widget<Switch>(switchFinder).value, isTrue);
 
+      await tester.ensureVisible(find.text("Save settings"));
       await tester.tap(find.text("Save settings"));
       await tester.pumpAndSettle();
 
@@ -74,8 +75,32 @@ void main() {
       expect(find.text("email@example.com"), findsOneWidget);
       expect(find.text("1234"), findsOneWidget);
       expect(find.text("Receive news by email"), findsOneWidget);
-      final Switch switchWidget = tester.widget<Switch>(find.byType(Switch));
+      final Switch switchWidget =
+          tester.widget<Switch>(find.byKey(const Key('receive_news_switch')));
       expect(switchWidget.value, isTrue);
+    });
+
+    testWidgets("Settings view loads and saves dark mode", (tester) async {
+      SharedPreferencesAsyncPlatform.instance =
+          InMemorySharedPreferencesAsync.withData({
+        prefThemeMode: "light",
+      });
+
+      await tester.pumpWidget(const MaterialApp(home: SettingsView()));
+      await tester.pumpAndSettle();
+
+      final Finder themeSwitch = find.byKey(const Key('theme_mode_switch'));
+      expect(tester.widget<Switch>(themeSwitch).value, isFalse);
+
+      await tester.tap(themeSwitch);
+      await tester.pumpAndSettle();
+      expect(tester.widget<Switch>(themeSwitch).value, isTrue);
+
+      await tester.ensureVisible(find.text("Save settings"));
+      await tester.tap(find.text("Save settings"));
+      await tester.pumpAndSettle();
+
+      expect(find.text("Settings saved successfully"), findsOneWidget);
     });
   });
 }
