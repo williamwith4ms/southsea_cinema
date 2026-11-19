@@ -16,6 +16,8 @@ const MovieData testMovie = MovieData(
   price: 7.50,
 );
 
+const String tempDbFile = "temp_cinema_data.db";
+
 void main() {
   setUp(() async {
     sqfliteFfiInit();
@@ -210,6 +212,128 @@ void main() {
           "AND name = 'booking_items'",
         ),
         isNotEmpty,
+      );
+    });
+  
+    test("Opening the database multiple times returns the same instance", () async {
+      final Database db1 = await CinemaDatabase.instance.database;
+      final Database db2 = await CinemaDatabase.instance.database;
+      expect(db1, equals(db2));
+    });
+
+    test("Open a real temporary database to test init and create functions)", () async {
+      final Database db = await databaseFactoryFfiNoIsolate.openDatabase(
+        tempDbFile,
+        options: OpenDatabaseOptions(
+          version: 2,
+          onConfigure: (Database db) async {
+            await db.execute('PRAGMA foreign_keys = ON');
+          },
+          onCreate: CinemaDatabase.instance.createTables,
+          onUpgrade: CinemaDatabase.instance.upgradeDB,
+        ),
+      );
+      CinemaDatabase.instance.setDatabase(db);
+
+      final List<Map<String, Object?>> tables = await db.rawQuery(
+        "SELECT name FROM sqlite_master WHERE type='table' AND name='bookings'",
+      );
+      expect(tables.length, 1);
+
+      final List<Map<String, Object?>> bookingItemsTables = await db.rawQuery(
+        "SELECT name FROM sqlite_master WHERE type='table' AND name='booking_items'",
+      );
+      expect(bookingItemsTables.length, 1);
+
+      await db.close();
+      await databaseFactoryFfiNoIsolate.deleteDatabase(tempDbFile);
+    });
+  
+    test("Upgrade from v1 to v2 preserves existing bookings and creates booking_items table", () async {
+      await CinemaDatabase.instance.close();
+      final Database v1 = await databaseFactoryFfiNoIsolate.openDatabase(
+        tempDbFile,
+        options: OpenDatabaseOptions(
+          version: 1,
+          onConfigure: (Database db) async {
+            await db.execute('PRAGMA foreign_keys = ON');
+          },
+          onCreate: (Database db, int version) async {
+            await db.execute('''
+              CREATE TABLE bookings (
+                id INTEGER PRIMARY KEY AUTOINCREMENT,
+                booking_number INTEGER NOT NULL,
+                summary TEXT NOT NULL,
+                total REAL NOT NULL,
+                date TEXT NOT NULL
+              )
+            ''');
+          },
+        ),
+      );
+      await v1.insert('bookings', <String, Object?>{
+        'booking_number': 1001,
+        'summary': '1x Crimson Tide',
+        'total': 7.5,
+        'date': '01/01/1970 00:00',
+      });
+      CinemaDatabase.instance.setDatabase(v1);
+      await CinemaDatabase.instance.upgradeDB(v1, 1, 2);
+
+      final List<Booking> bookings =
+          await CinemaDatabase.instance.getAllBookings();
+      expect(bookings.length, 1);
+      expect(bookings[0].bookingNumber, 1001);
+      expect(
+        await v1.rawQuery(
+          "SELECT name FROM sqlite_master WHERE type = 'table' "
+          "AND name = 'booking_items'",
+        ),
+        isNotEmpty,
+      );
+
+      await v1.close();
+      await databaseFactoryFfiNoIsolate.deleteDatabase(tempDbFile);
+    });
+  
+    test("test insertBookingWithItems rolls back on failure", () async {
+      final Database db = await CinemaDatabase.instance.database;
+      await db.execute('''
+        CREATE TRIGGER reject_fail_item
+        BEFORE INSERT ON booking_items
+        WHEN NEW.title = 'Fail'
+        BEGIN
+          SELECT RAISE(FAIL, 'item insert failed');
+        END
+      ''');
+
+      const MovieData failMovie = MovieData(
+        id: "fail",
+        title: "Fail",
+        year: 2026,
+        rating: "R",
+        description: "Test",
+        imagePath: "assets/images/crimson-tide.jpg",
+        date: "22nd Oct 2026, 18:00",
+        price: 8.0,
+      );
+      final Booking booking = buildBooking(1001, "Valid and Fail", 23.0);
+
+      await expectLater(
+        CinemaDatabase.instance.insertBookingWithItems(
+          booking,
+          const [
+            CartItem(movieData: testMovie, quantity: 1),
+            CartItem(movieData: failMovie, quantity: 1),
+          ],
+        ),
+        throwsException,
+      );
+
+      expect(await CinemaDatabase.instance.getAllBookings(), isEmpty);
+      expect(
+        await db.query('booking_items'),
+        isEmpty,
       );
     });
   });

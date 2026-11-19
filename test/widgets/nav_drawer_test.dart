@@ -18,4 +18,26 @@ void main() {
     expect(find.text('My Basket'), findsOneWidget);
     expect(find.text('My Settings'), findsOneWidget);
   });
+
+  testWidgets('NavDrawer close button closes the drawer',
+      (WidgetTester tester) async {
+    await tester.pumpWidget(
+      MaterialApp(
+        home: Scaffold(
+          appBar: AppBar(),
+          drawer: const NavDrawer(),
+          body: const Text('Home content'),
+        ),
+      ),
+    );
+
+    await tester.tap(find.byIcon(Icons.menu));
+    await tester.pumpAndSettle();
+    expect(find.byType(Drawer), findsOneWidget);
+
+    await tester.tap(find.byIcon(Icons.close));
+    await tester.pumpAndSettle();
+
+    expect(find.byType(Drawer), findsNothing);
+  });
 }

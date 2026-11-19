@@ -4,6 +4,39 @@ import 'package:southsea_cinema/widgets/movie_card.dart';
 import 'package:flutter/services.dart';
 import 'package:shared_preferences_platform_interface/in_memory_shared_preferences_async.dart';
 import 'package:shared_preferences_platform_interface/shared_preferences_async_platform_interface.dart';
+import 'package:flutter/material.dart';
+import 'package:southsea_cinema/models/movie_data.dart';
+import 'package:southsea_cinema/repositories/movie_data_repository.dart';
+import 'package:southsea_cinema/views/home_view.dart';
+
+class SuccessfulMovieRepository extends MovieDataRepository {
+  @override
+  Future<List<MovieData>> loadMoviesFromAsset({
+    String assetPath = 'assets/data/movies.json',
+  }) async {
+    return const [
+      MovieData(
+        id: "test-movie",
+        title: "Test Movie",
+        year: 2026,
+        rating: "PG",
+        description: "Test movie description",
+        imagePath: "assets/images/test.jpg",
+        date: "Thu, 22nd Oct 2026, 18:00",
+        price: 7.50,
+      ),
+    ];
+  }
+}
+
+class FailingMovieRepository extends MovieDataRepository {
+  @override
+  Future<List<MovieData>> loadMoviesFromAsset({
+    String assetPath = 'assets/data/movies.json',
+  }) async {
+    throw Exception("asset unavailable");
+  }
+}
 
 void main() {
   setUp(() {
@@ -38,5 +71,15 @@ void main() {
               "On a U.S. nuclear missile sub, a young First Officer stages a mutiny to prevent his trigger-happy Captain from launching his missiles before confirming his orders to do so."),
           findsOneWidget);
     });
+
+    testWidgets("Home view shows loading indicator while movies load",
+        (WidgetTester tester) async {
+      await tester.pumpWidget(
+        const MaterialApp(home: HomeView()),
+      );
+
+      expect(find.byType(CircularProgressIndicator), findsOneWidget);
+    });
+
   });
 }
