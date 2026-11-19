@@ -1,9 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:southsea_cinema/database/cinema_db.dart';
+import 'package:southsea_cinema/models/booking.dart';
 import 'package:southsea_cinema/models/cart_item.dart';
 import 'package:southsea_cinema/models/movie_data.dart';
 import 'package:southsea_cinema/repositories/cart_repository.dart';
 import 'package:southsea_cinema/views/basket_view.dart';
+import 'package:sqflite_common_ffi/sqflite_common_ffi.dart';
 
 const MovieData testMovie1 = MovieData(
     id: "crimson-tide",
@@ -28,14 +31,58 @@ const MovieData testMovie2 = MovieData(
     price: 8.00);
 
 void main() {
-  setUp(() {
+  setUp(() async {
     CartRepository.instance.clearCart();
+    sqfliteFfiInit();
+    final Database database = await databaseFactoryFfiNoIsolate.openDatabase(
+      inMemoryDatabasePath,
+      options: OpenDatabaseOptions(
+          version: 1, onCreate: CinemaDatabase.instance.createTables),
+    );
+    CinemaDatabase.instance.setDatabase(database);
+  });
+
+  tearDown(() async {
+    CartRepository.instance.clearCart();
+    await CinemaDatabase.instance.close();
   });
 
   group("Basket View Tests", () {
+    testWidgets(
+        'Checkout saves the order, clears the basket and displays the order', (
+      WidgetTester tester,
+    ) async {
+      CartRepository.instance
+          .addItem(CartItem(movieData: testMovie1, quantity: 2));
+      await tester.pumpWidget(MaterialApp(
+        home: BasketView(),
+        routes: {
+          '/basket': (context) {
+            return const BasketView();
+          },
+        },
+      ));
+      await tester.pumpAndSettle();
+      await tester.tap(find.text("Buy Tickets"));
+      await tester.pumpAndSettle();
+      final List<Booking> bookings =
+          await CinemaDatabase.instance.getAllBookings();
+
+      expect(bookings, isNotNull);
+      expect(bookings.length, 1);
+      expect(bookings[0].bookingNumber, 1001);
+      expect(bookings[0].summary, "2x Crimson Tide");
+      expect(bookings[0].total, 16.5);
+      expect(CartRepository.instance.getItems().isEmpty, true);
+      expect(find.byType(BasketView), findsOneWidget);
+      expect(find.textContaining("1001) has been placed successfully"),
+          findsOneWidget);
+    });
+
     testWidgets("Basket view displays empty message when cart has no items",
         (WidgetTester tester) async {
       await tester.pumpWidget(const MaterialApp(home: BasketView()));
+      await tester.pumpAndSettle();
 
       expect(find.text("Your basket is empty."), findsOneWidget);
       expect(
@@ -49,6 +96,7 @@ void main() {
           .addItem(CartItem(movieData: testMovie1, quantity: 2));
 
       await tester.pumpWidget(const MaterialApp(home: BasketView()));
+      await tester.pumpAndSettle();
 
       expect(find.text("2 Tickets"), findsOneWidget);
       expect(find.text("Crimson Tide (1995)"), findsOneWidget);
@@ -66,6 +114,7 @@ void main() {
           .addItem(CartItem(movieData: testMovie1, quantity: 2));
 
       await tester.pumpWidget(const MaterialApp(home: BasketView()));
+      await tester.pumpAndSettle();
 
       expect(find.text("2 Tickets"), findsOneWidget);
       expect(find.text("Crimson Tide (1995)"), findsOneWidget);
@@ -75,7 +124,8 @@ void main() {
       await tester.pumpAndSettle();
 
       expect(
-          find.text("Your order has been placed successfully"), findsOneWidget);
+          find.textContaining("has been placed successfully"), findsOneWidget);
+      expect(find.text("Your basket is empty."), findsOneWidget);
     });
 
     testWidgets("Basket view line delete button removes tickets",
@@ -86,6 +136,7 @@ void main() {
           .addItem(CartItem(movieData: testMovie2, quantity: 1));
 
       await tester.pumpWidget(const MaterialApp(home: BasketView()));
+      await tester.pumpAndSettle();
 
       expect(find.text("Crimson Tide (1995)"), findsOneWidget);
       expect(find.text("Avatar (2009)"), findsOneWidget);
@@ -95,6 +146,52 @@ void main() {
 
       expect(find.text("Crimson Tide (1995)"), findsNothing);
       expect(find.text("Avatar (2009)"), findsOneWidget);
+    });
+
+    testWidgets("Basket is kept when saving fails",
+        (WidgetTester tester) async {
+      CartRepository.instance
+          .addItem(CartItem(movieData: testMovie1, quantity: 2));
+
+      await tester.runAsync(() async {
+        final Database database = await CinemaDatabase.instance.database;
+        await database.execute('DROP TABLE bookings');
+      });
+
+      await tester.pumpWidget(const MaterialApp(home: BasketView()));
+      await tester.pumpAndSettle();
+
+      await tester.runAsync(() async {
+        await tester.tap(find.text("Buy Tickets"));
+        await tester.pumpAndSettle();
+      });
+
+      await tester.pumpAndSettle();
+
+      expect(find.text("2 Tickets"), findsOneWidget);
+      expect(find.text("Crimson Tide (1995)"), findsOneWidget);
+      expect(CartRepository.instance.getItems().length, 1);
+    });
+
+    testWidgets("Orders list is displayed after checkout",
+        (WidgetTester tester) async {
+      CartRepository.instance
+          .addItem(CartItem(movieData: testMovie1, quantity: 2));
+
+      await tester.pumpWidget(const MaterialApp(home: BasketView()));
+      await tester.pumpAndSettle();
+
+      await tester.tap(find.text("Buy Tickets"));
+      await tester.pumpAndSettle();
+
+      expect(
+          find.textContaining("has been placed successfully"), findsOneWidget);
+      expect(find.text("Your basket is empty."), findsOneWidget);
+
+      final List<Booking> bookings =
+          await CinemaDatabase.instance.getAllBookings();
+      expect(bookings.length, 1);
+      expect(bookings[0].bookingNumber, 1001);
     });
   });
 }
