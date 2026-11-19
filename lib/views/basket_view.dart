@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:southsea_cinema/constants.dart';
+import 'package:southsea_cinema/database/cinema_db.dart';
+import 'package:southsea_cinema/models/booking.dart';
 import 'package:southsea_cinema/models/cart_item.dart';
 import 'package:southsea_cinema/repositories/cart_repository.dart';
 import 'package:southsea_cinema/widgets/nav_drawer.dart';
@@ -16,6 +18,79 @@ class BasketView extends StatefulWidget {
 
 class _BasketViewState extends State<BasketView> {
   String _confirmationMessage = '';
+  List<Booking> _bookings = [];
+  bool _loading = true;
+
+  @override
+  void initState() {
+    super.initState();
+    _loadBookings();
+  }
+
+  Future<void> _loadBookings() async {
+    try {
+      final CinemaDatabase database = CinemaDatabase.instance;
+      final List<Booking> bookings = await database.getAllBookings();
+      if (!mounted) {
+        return;
+      }
+      setState(() {
+        _bookings = bookings;
+        _loading = false;
+      });
+    } catch (error) {
+      if (!mounted) {
+        return;
+      }
+      setState(() {
+        _loading = false;
+      });
+    }
+  }
+
+  Widget _buildBookingList() {
+    if (_bookings.isEmpty) {
+      return const Center(
+        child: Padding(
+          padding: EdgeInsets.symmetric(vertical: 32.0),
+          child: Text("No bookings found."),
+        ),
+      );
+    }
+
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        const Text(
+          "Past Bookings",
+          style: cinemaHeaderStyle,
+        ),
+        ListView.builder(
+          shrinkWrap: true,
+          itemCount: _bookings.length,
+          itemBuilder: (BuildContext context, int index) {
+            final Booking booking = _bookings[index];
+            return Card(
+              color: cinemaSurface,
+              margin: const EdgeInsets.symmetric(vertical: 8.0),
+              child: Padding(
+                padding: const EdgeInsets.all(16.0),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text("Booking Number: ${booking.bookingNumber}"),
+                    Text("Summary: ${booking.summary}"),
+                    Text("Total: £${booking.total.toStringAsFixed(2)}"),
+                    Text("Date: ${booking.date}"),
+                  ],
+                ),
+              ),
+            );
+          },
+        ),
+      ],
+    );
+  }
 
   Widget _buildEmptyState() {
     return const Center(
@@ -26,6 +101,24 @@ class _BasketViewState extends State<BasketView> {
         ),
       ),
     );
+  }
+
+  String _buildSummary(List<CartItem> items) {
+    final List<String> parts = [];
+    for (final CartItem item in items) {
+      parts.add('${item.quantity}x ${item.movieData.title}');
+    }
+    return parts.join(', ');
+  }
+
+  String _formatDate(DateTime now) {
+    final String day = now.day.toString().padLeft(2, '0');
+    final String month = now.month.toString().padLeft(2, '0');
+    final String year = now.year.toString();
+
+    final String hour = now.hour.toString().padLeft(2, '0');
+    final String minute = now.minute.toString().padLeft(2, '0');
+    return '$day/$month/$year $hour:$minute';
   }
 
   Widget _buildLineItem(CartRepository cart, CartItem item) {
@@ -133,11 +226,7 @@ class _BasketViewState extends State<BasketView> {
         SquaredButton(
             label: "Buy Tickets",
             onPressed: () {
-              setState(() {
-                cart.clearCart();
-                _confirmationMessage =
-                    "Your order has been placed successfully";
-              });
+              _checkout(cart, items);
             })
       ],
     ));
@@ -148,26 +237,84 @@ class _BasketViewState extends State<BasketView> {
     );
   }
 
+  Future<void> _checkout(CartRepository cart, List<CartItem> items) async {
+    final String summary = _buildSummary(items);
+    final double total = cart.getTotalPrice();
+    final String date = _formatDate(DateTime.now());
+
+    try {
+      final CinemaDatabase database = CinemaDatabase.instance;
+      final int bookingNumber = await database.getNextBookingNumber();
+      final Booking booking = Booking(
+        bookingNumber: bookingNumber,
+        summary: summary,
+        total: total,
+        date: date,
+      );
+      await database.insertBooking(booking);
+      cart.clearCart();
+      await _loadBookings();
+
+      if (!mounted) {
+        return;
+      }
+      setState(() {
+        _confirmationMessage =
+            "Your order (no. $bookingNumber) has been placed successfully";
+      });
+    } catch (error) {
+      if (!mounted) {
+        return;
+      }
+      setState(() {
+        _confirmationMessage =
+            "An error occurred while placing your order: $error";
+      });
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     final CartRepository cart = CartRepository.instance;
     final List<CartItem> cartItems = cart.getItems();
 
     final Widget content;
-    if (cartItems.isEmpty) {
-      if (_confirmationMessage.isNotEmpty) {
+
+    if (_loading) {
+      content = const Center(
+        child: CircularProgressIndicator(),
+      );
+    } else {
+      if (cartItems.isEmpty) {
+        if (_confirmationMessage.isNotEmpty) {
+          content = Column(
+            children: [
+              _buildEmptyState(),
+              SizedBox(height: 16.0),
+              Text(_confirmationMessage),
+              SizedBox(height: 16.0),
+              _buildBookingList(),
+            ],
+          );
+        } else {
+          content = Column(
+            children: [
+              _buildEmptyState(),
+              SizedBox(height: 16.0),
+              _buildBookingList(),
+            ],
+          );
+        }
+      } else {
         content = Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            _buildEmptyState(),
+            _buildBasketList(cart, cartItems),
             SizedBox(height: 16.0),
-            Text(_confirmationMessage),
+            _buildBookingList(),
           ],
         );
-      } else {
-        content = _buildEmptyState();
       }
-    } else {
-      content = _buildBasketList(cart, cartItems);
     }
 
     return Scaffold(
