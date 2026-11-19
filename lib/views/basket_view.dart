@@ -145,6 +145,7 @@ class _BasketViewState extends State<BasketView> {
                 Text("£${item.lineTotal.toStringAsFixed(2)}"),
                 SizedBox(width: 8.0),
                 DecoratedBox(
+                  key: Key("delete-${item.movieData.id}"),
                   decoration: BoxDecoration(
                       color: cinemaBrand, borderRadius: BorderRadius.zero),
                   child: IconButton(

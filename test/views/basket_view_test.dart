@@ -30,6 +30,17 @@ const MovieData testMovie2 = MovieData(
     date: "Fri, 23rd Oct 2026, 18:00",
     price: 8.00);
 
+const MovieData testMovie3 = MovieData(
+    id: "1917",
+    title: "1917",
+    year: 2019,
+    rating: "R",
+    description:
+        "April 6th, 1917. As an infantry battalion assembles to wage war deep in enemy territory, two soldiers are assigned to race against time and deliver a message that will stop 1,600 men from walking straight into a deadly trap.",
+    imagePath: "assets/images/1917.jpg",
+    date: "Sat, 24th Oct 2026, 18:00",
+    price: 7.50);
+
 void main() {
   setUp(() async {
     CartRepository.instance.clearCart();
@@ -192,6 +203,33 @@ void main() {
           await CinemaDatabase.instance.getAllBookings();
       expect(bookings.length, 1);
       expect(bookings[0].bookingNumber, 1001);
+    });
+
+    testWidgets(
+        "Add 3 movies and delete the middle one and check the other two remain",
+        (WidgetTester tester) async {
+      CartRepository.instance
+          .addItem(CartItem(movieData: testMovie1, quantity: 1));
+      CartRepository.instance
+          .addItem(CartItem(movieData: testMovie2, quantity: 1));
+      CartRepository.instance
+          .addItem(CartItem(movieData: testMovie3, quantity: 1));
+
+      await tester.pumpWidget(const MaterialApp(home: BasketView()));
+      await tester.pumpAndSettle();
+
+      expect(find.text("Crimson Tide (1995)"), findsOneWidget);
+      expect(find.text("Avatar (2009)"), findsOneWidget);
+      expect(find.text("1917 (2019)"), findsOneWidget);
+
+      // use a key to find the delete button for the second movie and tap it
+      const Key key = Key("delete-avatar");
+      await tester.tap(find.byKey(key));
+      await tester.pumpAndSettle();
+
+      expect(find.text("Crimson Tide (1995)"), findsOneWidget);
+      expect(find.text("Avatar (2009)"), findsNothing);
+      expect(find.text("1917 (2019)"), findsOneWidget);
     });
   });
 }
