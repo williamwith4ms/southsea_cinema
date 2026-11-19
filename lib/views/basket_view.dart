@@ -78,7 +78,23 @@ class _BasketViewState extends State<BasketView> {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text("Booking Number: ${booking.bookingNumber}"),
-                    Text("Summary: ${booking.summary}"),
+                    if (booking.items.isEmpty &&
+                        booking.summary.trim().isNotEmpty)
+                      Text("Summary: ${booking.summary}"),
+                    if (booking.items.isNotEmpty) ...[
+                      const SizedBox(height: 8.0),
+                      const Text(
+                        "Items:",
+                        style: TextStyle(fontWeight: FontWeight.bold),
+                      ),
+                    ],
+                    for (final BookingItem item in booking.items)
+                      Padding(
+                        padding: const EdgeInsets.only(top: 4.0),
+                        child: Text(
+                          "${item.quantity}x ${item.title} (£${item.unitPrice.toStringAsFixed(2)} each)",
+                        ),
+                      ),
                     Text("Total: £${booking.total.toStringAsFixed(2)}"),
                     Text("Date: ${booking.date}"),
                   ],
@@ -100,14 +116,6 @@ class _BasketViewState extends State<BasketView> {
         ),
       ),
     );
-  }
-
-  String _buildSummary(List<CartItem> items) {
-    final List<String> parts = [];
-    for (final CartItem item in items) {
-      parts.add('${item.quantity}x ${item.movieData.title}');
-    }
-    return parts.join(', ');
   }
 
   String _formatDate(DateTime now) {
@@ -238,7 +246,6 @@ class _BasketViewState extends State<BasketView> {
   }
 
   Future<void> _checkout(CartRepository cart, List<CartItem> items) async {
-    final String summary = _buildSummary(items);
     final double total = cart.getTotalPrice();
     final String date = _formatDate(DateTime.now());
 
@@ -247,11 +254,11 @@ class _BasketViewState extends State<BasketView> {
       final int bookingNumber = await database.getNextBookingNumber();
       final Booking booking = Booking(
         bookingNumber: bookingNumber,
-        summary: summary,
+        summary: '',
         total: total,
         date: date,
       );
-      await database.insertBooking(booking);
+      await database.insertBookingWithItems(booking, items);
       cart.clearCart();
       await _loadBookings();
 

@@ -48,7 +48,12 @@ void main() {
     final Database database = await databaseFactoryFfiNoIsolate.openDatabase(
       inMemoryDatabasePath,
       options: OpenDatabaseOptions(
-          version: 1, onCreate: CinemaDatabase.instance.createTables),
+          version: 2,
+          onConfigure: (Database db) async {
+            await db.execute('PRAGMA foreign_keys = ON');
+          },
+          onCreate: CinemaDatabase.instance.createTables,
+          onUpgrade: CinemaDatabase.instance.upgradeDB),
     );
     CinemaDatabase.instance.setDatabase(database);
   });
@@ -82,7 +87,7 @@ void main() {
       expect(bookings, isNotNull);
       expect(bookings.length, 1);
       expect(bookings[0].bookingNumber, 1001);
-      expect(bookings[0].summary, "2x Crimson Tide");
+      expect(bookings[0].summary, isEmpty);
       expect(bookings[0].total, 16.5);
       expect(CartRepository.instance.getItems().isEmpty, true);
       expect(find.byType(BasketView), findsOneWidget);
@@ -203,6 +208,12 @@ void main() {
           await CinemaDatabase.instance.getAllBookings();
       expect(bookings.length, 1);
       expect(bookings[0].bookingNumber, 1001);
+      expect(bookings[0].items.length, 1);
+      expect(find.textContaining("Crimson Tide"), findsWidgets);
+      expect(find.textContaining("2x Crimson Tide"), findsOneWidget);
+      expect(find.textContaining("£7.50"), findsWidgets);
+      expect(find.textContaining("£16.50"), findsWidgets);
+      expect(find.textContaining("Summary:"), findsNothing);
     });
 
     testWidgets(

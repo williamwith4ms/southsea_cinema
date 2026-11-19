@@ -1,5 +1,6 @@
 import 'package:path/path.dart';
 import 'package:southsea_cinema/models/booking.dart';
+import 'package:southsea_cinema/models/cart_item.dart';
 import 'package:sqflite/sqflite.dart';
 
 class CinemaDatabase {
@@ -28,8 +29,9 @@ class CinemaDatabase {
     final String filePath = join(folder, fileName);
     final Database db = await openDatabase(
       filePath,
-      version: 1,
+      version: 2,
       onCreate: _createDB,
+      onUpgrade: upgradeDB,
     );
     return db;
   }
@@ -44,6 +46,34 @@ class CinemaDatabase {
         date TEXT NOT NULL
       )
     ''');
+
+    if (version >= 2) {
+      await _createBookingItemsTable(db);
+    }
+  }
+
+  Future<void> _createBookingItemsTable(Database db) async {
+    await db.execute('''
+      CREATE TABLE booking_items (
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        booking_id INTEGER NOT NULL,
+        movie_id TEXT NOT NULL,
+        title TEXT NOT NULL,
+        quantity INTEGER NOT NULL,
+        unit_price REAL NOT NULL,
+        FOREIGN KEY (booking_id) REFERENCES bookings(id) ON DELETE CASCADE
+      )
+    ''');
+  }
+
+  Future<void> upgradeDB(
+    Database db,
+    int oldVersion,
+    int newVersion,
+  ) async {
+    if (oldVersion < 2 && newVersion >= 2) {
+      await _createBookingItemsTable(db);
+    }
   }
 
   Future<void> _createDB(Database db, int version) async {
@@ -51,21 +81,21 @@ class CinemaDatabase {
 
     await db.insert('bookings', <String, Object?>{
       'booking_number': 1001,
-      'summary': '1x Crimson Tide',
+      'summary': '',
       'total': 7.5,
       'date': "2026-11-18 23:45",
     });
 
     await db.insert('bookings', <String, Object?>{
       'booking_number': 1002,
-      'summary': '1x Avatar',
+      'summary': '',
       'total': 7.5,
       'date': "2026-11-18 23:30",
     });
 
     await db.insert('bookings', <String, Object?>{
       'booking_number': 1003,
-      'summary': '1x 1917',
+      'summary': '',
       'total': 7.5,
       'date': "2026-11-18 23:32",
     });
@@ -76,6 +106,43 @@ class CinemaDatabase {
     await db.insert('bookings', booking.toMap());
   }
 
+  Future<int> insertBookingWithItems(
+    Booking booking,
+    List<CartItem> items,
+  ) async {
+    final Database db = await database;
+    return db.transaction<int>((Transaction transaction) async {
+      final int bookingId = await transaction.insert(
+        'bookings',
+        booking.toMap(),
+      );
+
+      for (final CartItem item in items) {
+        await transaction.insert(
+          'booking_items',
+          <String, Object?>{
+            'booking_id': bookingId,
+            'movie_id': item.movieData.id,
+            'title': item.movieData.title,
+            'quantity': item.quantity,
+            'unit_price': item.movieData.price,
+          },
+        );
+      }
+      return bookingId;
+    });
+  }
+
+  Future<List<Map<String, Object?>>> getBookingItems(int bookingId) async {
+    final Database db = await database;
+    return db.query(
+      'booking_items',
+      where: 'booking_id = ?',
+      whereArgs: <Object?>[bookingId],
+      orderBy: 'id ASC',
+    );
+  }
+
   Future<List<Booking>> getAllBookings() async {
     final Database db = await database;
     final List<Map<String, Object?>> records =
@@ -83,7 +150,30 @@ class CinemaDatabase {
 
     final List<Booking> bookings = [];
     for (final Map<String, Object?> row in records) {
-      bookings.add(Booking.fromMap(row));
+      final Booking booking = Booking.fromMap(row);
+      final int? bookingId = booking.id;
+      final List<BookingItem> items = [];
+      if (bookingId != null) {
+        final List<Map<String, Object?>> itemRecords = await db.query(
+          'booking_items',
+          where: 'booking_id = ?',
+          whereArgs: <Object?>[bookingId],
+          orderBy: 'id ASC',
+        );
+        items.addAll(
+          itemRecords.map(BookingItem.fromMap),
+        );
+      }
+      bookings.add(
+        Booking(
+          id: booking.id,
+          bookingNumber: booking.bookingNumber,
+          summary: booking.summary,
+          total: booking.total,
+          date: booking.date,
+          items: items,
+        ),
+      );
     }
     return bookings;
   }
