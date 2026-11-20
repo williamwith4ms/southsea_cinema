@@ -214,14 +214,16 @@ void main() {
         isNotEmpty,
       );
     });
-  
-    test("Opening the database multiple times returns the same instance", () async {
+
+    test("Opening the database multiple times returns the same instance",
+        () async {
       final Database db1 = await CinemaDatabase.instance.database;
       final Database db2 = await CinemaDatabase.instance.database;
       expect(db1, equals(db2));
     });
 
-    test("Open a real temporary database to test init and create functions)", () async {
+    test("Open a real temporary database to test init and create functions)",
+        () async {
       final Database db = await databaseFactoryFfiNoIsolate.openDatabase(
         tempDbFile,
         options: OpenDatabaseOptions(
@@ -248,8 +250,10 @@ void main() {
       await db.close();
       await databaseFactoryFfiNoIsolate.deleteDatabase(tempDbFile);
     });
-  
-    test("Upgrade from v1 to v2 preserves existing bookings and creates booking_items table", () async {
+
+    test(
+        "Upgrade from v1 to v2 preserves existing bookings and creates booking_items table",
+        () async {
       await CinemaDatabase.instance.close();
       final Database v1 = await databaseFactoryFfiNoIsolate.openDatabase(
         tempDbFile,
@@ -295,7 +299,7 @@ void main() {
       await v1.close();
       await databaseFactoryFfiNoIsolate.deleteDatabase(tempDbFile);
     });
-  
+
     test("test insertBookingWithItems rolls back on failure", () async {
       final Database db = await CinemaDatabase.instance.database;
       await db.execute('''
